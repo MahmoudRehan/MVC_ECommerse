@@ -1,0 +1,209 @@
+﻿@model DashboardVM
+
+<div class="container-fluid py-4">
+
+    <!-- Page Title -->
+    <div class="mb-4">
+        <h2 class="fw-bold">📊 Admin Dashboard</h2>
+        <p class="text-muted">Overview of your store statistics</p>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row g-4">
+
+        <!-- Products -->
+
+        <a asp-controller="Products" asp-action="Index" class="col-lg-3 col-md-6 ">
+
+            <div >
+
+                <div class="card shadow-sm border-0">
+
+                    <div class="card-body d-flex justify-content-between align-items-center">
+
+                        <div>
+                            <h6 class="text-muted">Products</h6>
+                            <h3 class="fw-bold">@Model.TotalProducts</h3>
+                        </div>
+
+                        <div class="fs-1 text-primary">
+                            📦
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </a>
+
+        <!-- Categories -->
+        <a asp-controller="Categories" asp-action="Index" class="text-decoration-none  col-lg-3 col-md-6">
+        <div >
+            <div class="card shadow-sm border-0">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted">Categories</h6>
+                        <h3 class="fw-bold">@Model.TotalCategories</h3>
+                    </div>
+                    <div class="fs-1 text-info">
+                        🗂
+                    </div>
+                </div>
+            </div>
+        </div>
+        </a>
+        <!-- Orders -->
+        <a asp-controller="Orders" asp-action="index" class="col-lg-3 col-md-6">
+            <div >
+                <div class="card shadow-sm border-0">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted">Orders</h6>
+                            <h3 class="fw-bold">@Model.TotalOrders</h3>
+                        </div>
+                        <div class="fs-1 text-warning">
+                            🛒
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+       
+
+        <!-- Revenue -->
+        <div class="col-lg-3 col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted">Revenue</h6>
+                        <h3 class="fw-bold text-success">$@Model.Revenue</h3>
+                    </div>
+                    <div class="fs-1 text-success">
+                        💰
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Order Status -->
+    <div class="row g-4 mt-3">
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm text-center">
+                <div class="card-body">
+                    <h6 class="text-muted">Pending Orders</h6>
+                    <h3 class="text-warning">@Model.PendingOrders</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm text-center">
+                <div class="card-body">
+                    <h6 class="text-muted">Completed Orders</h6>
+                    <h3 class="text-success">@Model.CompletedOrders</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm text-center">
+                <div class="card-body">
+                    <h6 class="text-muted">Cancelled Orders</h6>
+                    <h3 class="text-danger">@Model.CancelledOrders</h3>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Latest Orders Table -->
+    <div class="card shadow-sm border-0 mt-4">
+
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">📋 Latest Orders</h5>
+        </div>
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead class="table-light">
+                        <tr>
+                            <th>Order Number</th>
+                            <th>Date</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var order in Model.Orders)
+                        {
+                            <tr>
+
+                                <td>
+                                    <span class="badge bg-primary">
+                                        @order.OrderNumber
+                                    </span>
+                                </td>
+
+                                <td>
+                                    @order.OrderDate.ToShortDateString()
+                                </td>
+
+                                <td class="fw-bold text-success">
+                                    $@order.TotalAmount
+                                </td>
+
+                                <td>
+
+                                    @{
+                                        var statusClass = order.Status switch
+                                        {
+                                            0 => "bg-warning text-dark",
+                                            1 => "bg-info",
+                                            2 => "bg-primary",
+                                            3 => "bg-success",
+                                            4 => "bg-danger",
+                                            _ => "bg-secondary"
+                                        };
+
+                                        var statusText = order.Status switch
+                                        {
+                                            0 => "Pending",
+                                            1 => "Processing",
+                                            2 => "Shipped",
+                                            3 => "Delivered",
+                                            4 => "Cancelled",
+                                            _ => "Unknown"
+                                        };
+                                    }
+
+                                    <span class="badge @statusClass">
+                                        @statusText
+                                    </span>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

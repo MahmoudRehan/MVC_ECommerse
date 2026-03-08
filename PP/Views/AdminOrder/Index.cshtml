@@ -1,0 +1,98 @@
+﻿@model IEnumerable<Order>
+
+<div class="container mt-5">
+
+    <h2 class="fw-bold mb-4">🛒 Orders</h2>
+
+    <div class="card shadow border-0">
+
+        <div class="card-body">
+
+            <table class="table table-hover align-middle">
+
+                <thead class="table-light">
+                    <tr>
+                       
+                        <th>Order Number</th>
+                        <th>Date</th>
+                        <th>Total</th>
+                        <th>Items</th>
+                        <th>Status</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+
+
+                            <td class="fw-semibold">@item.OrderNumber</td>
+
+                            <td>@item.OrderDate.ToShortDateString()</td>
+
+                            <td class="text-success fw-bold">$@item.TotalAmount</td>
+
+                            <td>
+                                <span class="badge bg-secondary">
+                                    @item.OrderItems.Sum(o => o.Quantity)
+                                </span>
+                            </td>
+
+                            <td>
+
+                                @{
+                                    var statusClass = item.Status switch
+                                    {
+                                        0 => "bg-warning text-dark",
+                                        1 => "bg-info",
+                                        2 => "bg-primary",
+                                        3 => "bg-success",
+                                        4 => "bg-danger",
+                                        _ => "bg-secondary"
+                                    };
+
+                                    var statusText = item.Status switch
+                                    {
+                                        0 => "Pending",
+                                        1 => "Processing",
+                                        2 => "Shipped",
+                                        3 => "Delivered",
+                                        4 => "Cancelled",
+                                        _ => "Unknown"
+                                    };
+                                }
+
+                                <span class="badge @statusClass">@statusText</span>
+
+                            </td>
+
+                            <td class="text-center">
+
+                                <a asp-action="UpdateStatus"
+                                   asp-route-id="@item.OrderId"
+                                   class="btn btn-sm btn-warning">
+                                    Update States
+                                </a>
+
+                                <a asp-action="Details"
+                                   asp-route-id="@item.OrderId"
+                                   class="btn btn-sm btn-info text-white">
+                                    View Details
+                                </a>
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+</div>

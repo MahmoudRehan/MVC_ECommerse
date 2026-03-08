@@ -1,0 +1,216 @@
+@model CheckoutVM
+
+<div class="container mt-5 mb-5">
+
+    <!-- Page Header -->
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold">💳 Checkout</h1>
+        <p class="lead text-muted">Review your order and complete purchase</p>
+    </div>
+
+    <form asp-action="Checkout" method="post">
+
+        <div class="row">
+
+            <!-- Order Summary -->
+            <div class="col-lg-8">
+
+                <!-- Cart Items Review -->
+                <div class="card shadow-sm border-0 mb-4">
+
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">📦 Order Items</h5>
+                    </div>
+
+                    <div class="card-body">
+
+                        @foreach (var item in Model.CartItems)
+                        {
+                            <div class="row align-items-center mb-3 pb-3 border-bottom">
+
+                                <!-- Product Image -->
+                                <div class="col-md-2 col-3">
+                                    <img src="~/Images/Products/@(item.PictureUrl ?? "no-image.png")"
+                                         class="img-fluid rounded"
+                                         alt="@item.ProductName"
+                                         style="width: 100%; height: 80px; object-fit: cover;" />
+                                </div>
+
+                                <!-- Product Info -->
+                                <div class="col-md-5 col-9">
+                                    <h6 class="fw-bold mb-1">@item.ProductName</h6>
+                                    <p class="text-muted mb-0 small">Unit Price: $@item.Price</p>
+                                </div>
+
+                                <!-- Quantity -->
+                                <div class="col-md-2 col-6 mt-2 mt-md-0">
+                                    <span class="text-muted">Qty: </span>
+                                    <span class="fw-bold">@item.Quantity</span>
+                                </div>
+
+                                <!-- Item Total -->
+                                <div class="col-md-3 col-6 text-end mt-2 mt-md-0">
+                                    <p class="fw-bold text-primary mb-0">$@item.TotalPrice</p>
+                                </div>
+
+                            </div>
+                        }
+
+                    </div>
+
+                </div>
+
+                <!-- Shipping Address Selection -->
+                <div class="card shadow-sm border-0 mb-4">
+
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">🚚 Shipping Address</h5>
+                    </div>
+
+                    <div class="card-body">
+
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="row">
+
+                            <!-- Street Address -->
+                            <div class="col-12 mb-3">
+                                <label asp-for="Street" class="form-label fw-semibold"></label>
+                                <input asp-for="Street" 
+                                       class="form-control" 
+                                       placeholder="Enter street address (e.g., 123 Main Street)" />
+                                <span asp-validation-for="Street" class="text-danger"></span>
+                            </div>
+
+                            <!-- City -->
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="City" class="form-label fw-semibold"></label>
+                                <input asp-for="City" 
+                                       class="form-control" 
+                                       placeholder="Enter city" />
+                                <span asp-validation-for="City" class="text-danger"></span>
+                            </div>
+
+                            <!-- Zip Code -->
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Zip" class="form-label fw-semibold"></label>
+                                <input asp-for="Zip" 
+                                       class="form-control" 
+                                       placeholder="Enter zip code" />
+                                <span asp-validation-for="Zip" class="text-danger"></span>
+                            </div>
+
+                            <!-- Country -->
+                            <div class="col-12 mb-3">
+                                <label asp-for="Country" class="form-label fw-semibold"></label>
+                                <input asp-for="Country" 
+                                       class="form-control" 
+                                       placeholder="Enter country" />
+                                <span asp-validation-for="Country" class="text-danger"></span>
+                            </div>
+
+                        </div>
+
+                       
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Order Total & Place Order -->
+            <div class="col-lg-4">
+
+                <div class="card shadow-sm border-0 sticky-top" style="top: 100px;">
+
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">Order Summary</h5>
+                    </div>
+
+                    <div class="card-body">
+
+                        <!-- Summary Details -->
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="text-muted">Items:</span>
+                            <span class="fw-semibold">@Model.CartItems.Sum(c => c.Quantity)</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="text-muted">Subtotal:</span>
+                            <span class="fw-semibold">$@Model.TotalAmount</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="text-muted">Shipping:</span>
+                            <span class="fw-semibold text-success">FREE</span>
+                        </div>
+
+                        <hr />
+
+                        <div class="d-flex justify-content-between mb-4">
+                            <span class="fs-5 fw-bold">Total:</span>
+                            <span class="fs-4 fw-bold text-success">$@Model.TotalAmount</span>
+                        </div>
+
+                        <!-- Place Order Button -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                ✅ Place Order
+                            </button>
+                        </div>
+
+                        <div class="text-center mt-3">
+                            <a asp-controller="Cart" asp-action="Index" class="text-decoration-none">
+                                ← Back to Cart
+                            </a>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+<!-- Display Error Messages -->
+@if (TempData["Error"] != null)
+{
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div class="toast show bg-danger text-white" role="alert">
+            <div class="toast-body">
+                ❌ @TempData["Error"]
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        // Auto-hide toast messages after 5 seconds
+        setTimeout(function () {
+            document.querySelectorAll('.toast').forEach(function (toast) {
+                toast.classList.remove('show');
+            });
+        }, 5000);
+    </script>
+}
+
+<style>
+    .sticky-top {
+        position: sticky;
+    }
+
+    .toast {
+        min-width: 250px;
+    }
+</style>

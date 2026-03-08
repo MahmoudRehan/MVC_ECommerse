@@ -1,0 +1,92 @@
+﻿@model Product
+
+<div class="container mt-5">
+
+    <div class="card shadow-lg border-0 rounded-4">
+
+        <div class="row g-0">
+
+            <!-- Product Image -->
+
+            <div class="col-md-5 text-center p-4 bg-light">
+
+                <img src="~/Images/Products/@(Model.PictureUrl ?? "no-image.png")"
+                     class="img-fluid rounded"
+                     style="max-height:350px; object-fit:cover;" />
+
+            </div>
+
+            <!-- Product Details -->
+
+            <div class="col-md-7 text-center">
+
+                <div class="card-body p-4">
+
+                    <h2 class="fw-bold mb-3">
+                        @Model.Name
+                    </h2>
+
+                    <p class="text-muted mb-4">
+                        SKU: <span class="badge bg-secondary">@Model.SKU</span>
+                    </p>
+                   
+
+                    <h4 class="text-success fw-bold mb-3">
+                        Price:   $@Model.Price
+                    </h4>
+
+                    <hr />
+
+                    <div class="mb-2">
+                        <strong>Category :</strong>
+                        <span class="badge bg-info text-dark">
+                            @Model.Category?.Name
+                        </span>
+                    </div>
+
+                    <div class="mb-2">
+                        <strong>Stock :</strong>
+                        <span class="badge bg-dark">
+                            @Model.StockQuantity
+                        </span>
+                    </div>
+
+                    <div class="mb-4">
+
+                        <strong>Status :</strong>
+
+                        @if (Model.IsActive)
+                        {
+                            <span class="badge bg-success ms-2">Active</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger ms-2">Inactive</span>
+                        }
+
+                    </div>
+
+                    <div class="d-flex gap-2">
+
+                        <a asp-action="Edit"
+                           asp-route-id="@Model.Id"
+                           class="btn btn-warning">
+                            ✏ Edit
+                        </a>
+
+                        <a asp-action="Index"
+                           class="btn btn-secondary">
+                            ⬅ Back
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

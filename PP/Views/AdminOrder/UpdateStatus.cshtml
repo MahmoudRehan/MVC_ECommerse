@@ -1,0 +1,33 @@
+﻿@model Order
+
+<div class="container mt-5">
+
+    <h2>Update Order Status</h2>
+
+    <form asp-action="UpdateStatus" method="post">
+
+        <input type="hidden" name="id" value="@Model.OrderId" />
+
+        <div class="mb-3">
+
+            <label class="form-label">Status</label>
+
+            <select name="newStatus" class="form-control">
+
+                <option value="0" selected="@(Model.Status == 0)">Pending</option>
+                <option value="1" selected="@(Model.Status == 1)">Processing</option>
+                <option value="2" selected="@(Model.Status == 2)">Shipped</option>
+                <option value="3" selected="@(Model.Status == 3)">Delivered</option>
+                <option value="4" selected="@(Model.Status == 4)">Cancelled</option>
+
+            </select>
+
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Update Status
+        </button>
+
+    </form>
+
+</div>

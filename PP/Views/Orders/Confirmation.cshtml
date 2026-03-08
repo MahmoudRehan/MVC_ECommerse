@@ -1,0 +1,148 @@
+@model OrderDetailsVM
+
+<div class="container mt-5 mb-5">
+
+    <!-- Success Header -->
+    <div class="text-center mb-5">
+        <div class="mb-3">
+            <span style="font-size: 100px;">✅</span>
+        </div>
+        <h1 class="display-4 fw-bold text-success">Order Placed Successfully!</h1>
+        <p class="lead text-muted">Thank you for your purchase</p>
+    </div>
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-10">
+
+            <!-- Order Information Card -->
+            <div class="card shadow-sm border-0 mb-4">
+
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">📋 Order Details</h4>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="row mb-4">
+
+                        <div class="col-md-6">
+                            <h5 class="fw-bold mb-3">Order Information</h5>
+                            <p class="mb-2">
+                                <strong>Order Number:</strong>
+                                <span class="badge bg-primary fs-6 ms-2">@Model.OrderNumber</span>
+                            </p>
+                            <p class="mb-2">
+                                <strong>Order Date:</strong>
+                                <span>@Model.OrderDate.ToString("MMMM dd, yyyy - hh:mm tt")</span>
+                            </p>
+                            <p class="mb-2">
+                                <strong>Status:</strong>
+                                <span class="badge @Model.StatusBadgeClass fs-6 ms-2">@Model.StatusText</span>
+                            </p>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h5 class="fw-bold mb-3">Shipping Address</h5>
+                            <address>
+                                <strong>@Model.ShippingAddress.Street</strong><br />
+                                @Model.ShippingAddress.City, @Model.ShippingAddress.Zip<br />
+                                @Model.ShippingAddress.Country
+                            </address>
+                        </div>
+
+                    </div>
+
+                    <hr />
+
+                    <!-- Order Items -->
+                    <h5 class="fw-bold mb-3">📦 Order Items</h5>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Product</th>
+                                    <th class="text-center">Unit Price</th>
+                                    <th class="text-center">Quantity</th>
+                                    <th class="text-end">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.OrderItems)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="~/Images/Products/@(item.Product?.PictureUrl ?? "no-image.png")"
+                                                     class="rounded me-3"
+                                                     alt="@item.Product?.Name"
+                                                     style="width: 60px; height: 60px; object-fit: cover;" />
+                                                <span class="fw-semibold">@item.Product?.Name</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">$@item.UnitPrice</td>
+                                        <td class="text-center">@item.Quantity</td>
+                                        <td class="text-end fw-bold text-primary">$@item.LineTotal</td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr class="table-light">
+                                    <td colspan="3" class="text-end fw-bold fs-5">Total Amount:</td>
+                                    <td class="text-end fw-bold fs-4 text-success">$@Model.TotalAmount</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex justify-content-between">
+                <a asp-controller="Catalog" asp-action="Index" class="btn btn-outline-primary btn-lg">
+                    🛍️ Continue Shopping
+                </a>
+                <a asp-controller="Orders" asp-action="Index" class="btn btn-outline-secondary btn-lg">
+                    📋 View All Orders
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Success Message Toast -->
+@if (TempData["Success"] != null)
+{
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div class="toast show bg-success text-white" role="alert">
+            <div class="toast-body">
+                ✅ @TempData["Success"]
+            </div>
+        </div>
+    </div>
+}
+
+<style>
+    .sticky-top {
+        position: sticky;
+    }
+
+    .toast {
+        min-width: 250px;
+    }
+</style>
+
+<script>
+    // Auto-hide toast messages after 5 seconds
+    setTimeout(function () {
+        document.querySelectorAll('.toast').forEach(function (toast) {
+            toast.classList.remove('show');
+        });
+    }, 5000);
+</script>

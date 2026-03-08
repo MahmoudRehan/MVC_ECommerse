@@ -1,0 +1,175 @@
+﻿@model ProductVM
+
+<div class="container mt-5">
+
+    <div class="col-md-7 m-auto">
+
+        <div class="card shadow-lg border-0 rounded-4">
+
+            <div class="card-body p-4">
+
+                <h3 class="text-center mb-4 fw-bold">
+                    ✏ Edit Product
+                </h3>
+
+                <form asp-action="Edit" enctype="multipart/form-data">
+
+                    <input asp-for="Id" type="hidden" />
+                    <input type="hidden" asp-for="ExistingImage" />
+
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+
+
+                    <div class="text-center mb-4">
+
+                        <img src="~/Images/Products/@(Model.ExistingImage?? "LEO.jpg")"
+                             width="150"
+                             class="rounded shadow-sm" />
+
+                    </div>
+
+                    <!-- Name -->
+
+                    <div class="mb-3">
+
+                        <label asp-for="Name" class="form-label"></label>
+
+                        <input asp-for="Name" class="form-control" />
+
+                        <span asp-validation-for="Name" class="text-danger"></span>
+
+                    </div>
+
+                    <!-- SKU -->
+
+                    <div class="mb-3">
+
+                        <label asp-for="SKU" class="form-label"></label>
+
+                        <input asp-for="SKU" class="form-control" />
+
+                        <span asp-validation-for="SKU" class="text-danger"></span>
+
+                    </div>
+
+                    <!-- Price -->
+
+                    <div class="mb-3">
+
+                        <label asp-for="Price" class="form-label"></label>
+
+                        <input asp-for="Price" class="form-control" />
+
+                        <span asp-validation-for="Price" class="text-danger"></span>
+
+                    </div>
+
+                    <!-- Stock -->
+
+                    <div class="mb-3">
+
+                        <label asp-for="StockQuantity" class="form-label"></label>
+
+                        <input asp-for="StockQuantity" class="form-control" />
+
+                        <span asp-validation-for="StockQuantity" class="text-danger"></span>
+
+                    </div>
+
+                    <!-- Upload new Image -->
+
+                    <div class="mb-3">
+
+                        <label asp-for="Image" class="form-label">Change Image</label>
+
+                        <input asp-for="Image" type="file" class="form-control" />
+
+                        <span asp-validation-for="Image" class="text-danger"></span>
+
+                    </div>
+
+                    <!-- Category -->
+
+                    <div class="mb-3">
+
+                        <label asp-for="CategoryId" class="form-label"></label>
+
+                        <select asp-for="CategoryId"
+                                class="form-select"
+                                asp-items="@(new SelectList(ViewBag.Categories, "Id", "Name"))">
+
+                            <option value="">-- Select Category --</option>
+
+                        </select>
+
+                        <span asp-validation-for="CategoryId" class="text-danger"></span>
+
+                    </div>
+
+                    <!-- Status -->
+
+                    <div class="mb-4">
+
+                        <label class="form-label">Status</label>
+
+                        <div class="form-check">
+
+                            <input class="form-check-input"
+                                   type="radio"
+                                   asp-for="IsActive"
+                                   value="true" />
+
+                            <label class="form-check-label">
+                                Active
+                            </label>
+
+                        </div>
+
+                        <div class="form-check">
+
+                            <input class="form-check-input"
+                                   type="radio"
+                                   asp-for="IsActive"
+                                   value="false" />
+
+                            <label class="form-check-label">
+                                Inactive
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Buttons -->
+
+                    <div class="d-flex justify-content-between">
+
+                        <a asp-action="Index" class="btn btn-secondary w-50 me-2">
+                            ⬅ Back
+                        </a>
+
+                        <button type="submit" class="btn btn-warning w-50">
+                            💾 Update
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+
+}

@@ -1,0 +1,193 @@
+@model IEnumerable<Product>
+
+<div class="container mt-5">
+
+    <!-- Hero Section -->
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold">🛍️ Shop Our Products</h1>
+        <p class="lead text-muted">Browse our collection of quality products</p>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <form method="get" asp-action="Index" class="row g-3 align-items-end">
+
+                <!-- Search -->
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Search</label>
+                    <input type="text"
+                           name="q"
+                           value="@ViewBag.SearchQuery"
+                           class="form-control"
+                           placeholder="Search products..." />
+                </div>
+
+                <!-- Category Filter -->
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Category</label>
+                    <select name="categoryId" class="form-select">
+                        <option value="">All Categories</option>
+                        @foreach (var cat in ViewBag.Categories)
+                        {
+                            <option value="@cat.Id"
+                                    selected="@(ViewBag.CategoryId == cat.Id ? "selected" : null)">
+                                @cat.Name
+                            </option>
+                        }
+                    </select>
+                </div>
+
+                <!-- Sort -->
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Sort By</label>
+                    <select name="sort" class="form-select">
+                        <option value="">Default</option>
+                        <option value="price_asc" selected="@(ViewBag.Sort == "price_asc" ? "selected" : null)">
+                            Price: Low to High
+                        </option>
+                        <option value="price_desc" selected="@(ViewBag.Sort == "price_desc" ? "selected" : null)">
+                            Price: High to Low
+                        </option>
+                    </select>
+                </div>
+
+                <!-- Filter Button -->
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-primary w-100">
+                        🔍 Filter
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- Products Count -->
+    <div class="mb-3">
+        <p class="text-muted">
+            <strong>@Model.Count()</strong> products found
+        </p>
+    </div>
+
+    <!-- Products Grid -->
+    @if (Model.Any())
+    {
+        <div class="row g-4">
+
+            @foreach (var product in Model)
+            {
+                <div class="col-md-6 col-lg-4 col-xl-3">
+
+                    <div class="card product-card h-100 shadow-sm border-0">
+
+                        <!-- Product Image -->
+                        <div class="card-img-wrapper">
+                            <img src="~/Images/Products/@(product.PictureUrl ?? "no-image.png")"
+                                 class="card-img-top"
+                                 alt="@product.Name"
+                                 style="height: 250px; object-fit: cover;" />
+
+                            <!-- Stock Badge -->
+                            <div class="position-absolute top-0 end-0 m-2">
+                                @if (product.StockQuantity > 10)
+                                {
+                                    <span class="badge bg-success">In Stock</span>
+                                }
+                                else if (product.StockQuantity > 0)
+                                {
+                                    <span class="badge bg-warning text-dark">Low Stock</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Out of Stock</span>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="card-body d-flex flex-column">
+
+                            <!-- Category -->
+                            <div class="mb-2">
+                                <span class="badge bg-info text-dark">
+                                    @product.Category?.Name
+                                </span>
+                            </div>
+
+                            <!-- Product Name -->
+                            <h5 class="card-title fw-bold mb-2">@product.Name</h5>
+
+                            <!-- Price -->
+                            <p class="text-success fs-4 fw-bold mb-3">
+                                $@product.Price
+                            </p>
+
+                            <!-- Action Button -->
+                            <div class="mt-auto">
+                                <a asp-action="Details"
+                                   asp-route-id="@product.Id"
+                                   class="btn btn-outline-primary w-100 mb-2">
+                                    👁️ View Details
+                                </a>
+                                
+                                @if (product.StockQuantity > 0)
+                                {
+                                    <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                                        <input type="hidden" name="productId" value="@product.Id" />
+                                        <button type="submit" class="btn btn-success w-100">
+                                            🛒 Add to Cart
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn btn-secondary w-100" disabled>
+                                        Out of Stock
+                                    </button>
+                                }
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center py-5">
+            <h4>😕 No products found</h4>
+            <p class="mb-0">Try adjusting your search or filters</p>
+        </div>
+    }
+
+</div>
+
+<style>
+    .product-card {
+        transition: all 0.3s ease;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15) !important;
+        }
+
+    .card-img-wrapper {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .product-card:hover .card-img-top {
+        transform: scale(1.05);
+    }
+
+    .card-img-top {
+        transition: transform 0.3s ease;
+    }
+</style>
