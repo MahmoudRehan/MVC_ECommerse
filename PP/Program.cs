@@ -19,7 +19,7 @@ namespace PP
             builder.Services.AddDistributedMemoryCache(); // Required for session storage
             builder.Services.AddSession(options =>
             {
-                options.IdleTimeout = TimeSpan.FromMinutes(30); // Session expires after 30 minutes of inactivity
+                options.IdleTimeout = TimeSpan.FromDays(30); // Session expires after 30 Days of inactivity
                 options.Cookie.HttpOnly = true; // Security: Cookie cannot be accessed via JavaScript
                 options.Cookie.IsEssential = true; // Required for GDPR compliance - session is essential for cart functionality
             });
