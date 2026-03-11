@@ -8,10 +8,7 @@ using PP.ViewModels;
 
 namespace PP.Controllers
 {
-    /// <summary>
-    /// Controller for handling order placement and checkout operations
-    /// Converts session-based cart into database-persisted orders
-    /// </summary>
+    
     public class OrdersController : Controller
     {
         private readonly IOrderRepo _orderRepo;
@@ -35,18 +32,16 @@ namespace PP.Controllers
         [HttpGet]
         public IActionResult Checkout()
         {
-            // Step 1: Retrieve cart from session storage
-            // CartService deserializes the JSON stored in session into List<CartItem>
+            
             var cart = CartService.GetCart(HttpContext.Session);
 
-            // Step 2: Validate cart is not empty
             if (cart == null || !cart.Any())
             {
                 TempData["Error"] = "Your cart is empty. Please add items before checkout.";
                 return RedirectToAction("Index", "Cart");
             }
 
-            // Step 3: Prepare checkout view model
+          
             var checkoutVM = new CheckoutVM
             {
                 CartItems = cart,
@@ -56,27 +51,20 @@ namespace PP.Controllers
             return View(checkoutVM);
         }
 
-        /// <summary>
-        /// POST: Process checkout and create order in database
-        /// This method converts session cart into a permanent database order
-        /// Uses transaction to ensure data consistency
-        /// Creates new address from user input during checkout
-        /// </summary>
+      
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Checkout(CheckoutVM checkoutVM)
         {
-            // Step 1: Retrieve cart from session
+            
             var cart = CartService.GetCart(HttpContext.Session);
 
-            // Step 2: Validate cart exists and has items
             if (cart == null || !cart.Any())
             {
                 TempData["Error"] = "Your cart is empty.";
                 return RedirectToAction("Index", "Cart");
             }
 
-            // Step 3: Validate model state (all address fields are required)
             if (!ModelState.IsValid)
             {
                 checkoutVM.CartItems = cart;
@@ -104,9 +92,7 @@ namespace PP.Controllers
                     _addressRepo.Save();
 
                 
-                    //  CREATE ORDER
-                    
-                    // Generate unique order number using timestamp + random number
+                   
                   
                     var orderNumber = $"ORD-{DateTime.Now:yyyyMMdd}-{new Random().Next(1000, 9999)}";
 
@@ -114,9 +100,9 @@ namespace PP.Controllers
                     {
                         OrderNumber = orderNumber,
                         OrderDate = DateTime.UtcNow,
-                        Status = 0, // 0 = Pending
+                        Status = 0, 
                         TotalAmount = CartService.GetCartTotal(cart),
-                        ShippingAddressId = shippingAddress.Id // Link to newly created address
+                        ShippingAddressId = shippingAddress.Id 
                     };
 
        
@@ -124,12 +110,11 @@ namespace PP.Controllers
                     _orderRepo.Save();
 
                     
-                    // CONVERT CART ITEMS TO ORDER ITEMS
-                    
+                   
 
                     foreach (var cartItem in cart)
                     {
-                        // Get current product from database to check stock
+
                         var product = _productRepo.GetById(cartItem.ProductId);
 
                         if (product == null)
@@ -144,7 +129,7 @@ namespace PP.Controllers
                             throw new Exception($"Not enough stock for {product.Name}. Available: {product.StockQuantity}, Requested: {cartItem.Quantity}");
                         }
 
-                        // Create OrderItem from CartItem
+
                         var orderItem = new OrderItem
                         {
                             OrderId = order.OrderId,
@@ -162,7 +147,7 @@ namespace PP.Controllers
                         _productRepo.Update(product);
                     }
 
-                    // Step 7: Save all changes to database
+
                     _orderRepo.Save();
 
                    
@@ -171,7 +156,7 @@ namespace PP.Controllers
                    
                     CartService.ClearCart(HttpContext.Session);
 
-                    // Step 10: Show success message and redirect to order confirmation
+
                     TempData["Success"] = "Order placed successfully!";
                     return RedirectToAction("Confirmation", new { orderNumber = order.OrderNumber });
                 }
@@ -193,7 +178,7 @@ namespace PP.Controllers
         
         public IActionResult Confirmation(string orderNumber)
         {
-            // Get order from database with all details
+
             var order = _orderRepo.GetOrderByNumber(orderNumber);
 
             if (order == null)
@@ -201,7 +186,7 @@ namespace PP.Controllers
                 return NotFound();
             }
 
-            // Map Order entity to OrderDetailsVM for display
+
             var orderDetailsVM = new OrderDetailsVM
             {
                 OrderNumber = order.OrderNumber,
@@ -238,9 +223,8 @@ namespace PP.Controllers
             return View(orderDetailsVM);
         }
 
-        /// <summary>
-        /// Display list of all orders
-        /// </summary>
+        
+
         public IActionResult Index()
         {
             var orders = _orderRepo.GetAllOrders();
