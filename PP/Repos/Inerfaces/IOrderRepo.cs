@@ -15,5 +15,7 @@ namespace PP.Repos.Inerfaces
         IEnumerable<Order> GetAllOrders();
         public IEnumerable<Order> GetAllPendingOrders();
         public IEnumerable<Order> GetAllCompletedOrders();
+
+        public IEnumerable<Order> GetUserOrder(string userId);  
     }
 }

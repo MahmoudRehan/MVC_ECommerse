@@ -8,7 +8,8 @@ namespace PP.ViewModels
        public int Id { get; set; }
         public string OrderNumber { get; set; }
 
-        
+        public string? CustomerEmail { get; set; }
+
         public DateTime OrderDate { get; set; }
 
         

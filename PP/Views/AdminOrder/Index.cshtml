@@ -12,8 +12,8 @@
 
                 <thead class="table-light">
                     <tr>
-                       
                         <th>Order Number</th>
+                        <th>Customer</th>
                         <th>Date</th>
                         <th>Total</th>
                         <th>Items</th>
@@ -30,6 +30,16 @@
 
 
                             <td class="fw-semibold">@item.OrderNumber</td>
+
+                            <td>
+                               
+                                
+                                    <a  class="text-decoration-none small">
+                                        @item.User.Email
+                                    </a>
+                                
+                               
+                            </td>
 
                             <td>@item.OrderDate.ToShortDateString()</td>
 

@@ -1,8 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace PP.Models.Context
 {
-    public class AppDbContext: DbContext
+    public class AppDbContext: IdentityDbContext<AppUser>
     {
             public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
             {
@@ -41,6 +42,18 @@ namespace PP.Models.Context
             builder.Entity<OrderItem>()
                 .Property(o => o.LineTotal)
                 .HasPrecision(18, 2);
+
+            builder.Entity<Order>()
+             .HasOne(o => o.User)
+             .WithMany(u => u.Orders)
+             .HasForeignKey(o => o.UserId)
+             .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<Address>()
+             .HasOne(a => a.User)
+             .WithMany(u => u.Addresses)
+             .HasForeignKey(a => a.UserId)
+             .OnDelete(DeleteBehavior.NoAction);
 
         }
         public DbSet<Product> Products { get; set; }

@@ -10,8 +10,7 @@
         public bool IsDefault { get; set; }
         public ICollection<Order> Orders { get; set; } = new List<Order>();
 
-        // Navigation property for the related User
-        //public int UserId { get; set; }
-        //public User User { get; set; }
+        public string UserId { get; set; }
+        public AppUser User { get; set; }
     }
 }

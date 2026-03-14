@@ -5,10 +5,7 @@ using PP.Repos.Inerfaces;
 
 namespace PP.Repos.Implementation
 {
-    /// <summary>
-    /// Repository for Order entity operations
-    /// Handles database operations for orders including related entities
-    /// </summary>
+    
     public class OrderRepo : GenericRepo<Order>, IOrderRepo
     {
         private readonly AppDbContext _context;
@@ -18,22 +15,18 @@ namespace PP.Repos.Implementation
             _context = context;
         }
 
-        /// <summary>
-        /// Get order with all related data (OrderItems, Products, ShippingAddress)
-        /// Used for displaying complete order details
-        /// </summary>
+        
         public Order GetOrderWithDetails(int orderId)
         {
             return _context.Orders
                 .Include(o => o.OrderItems)          // Include order items
                     .ThenInclude(oi => oi.Product)   // Include product details for each item
                 .Include(o => o.ShippingAddress)     // Include shipping address
+                .Include(o => o.User)                // Include the customer who placed the order
                 .FirstOrDefault(o => o.OrderId == orderId);
         }
 
-        /// <summary>
-        /// Get order by its unique order number
-        /// </summary>
+       
         public Order GetOrderByNumber(string orderNumber)
         {
             return _context.Orders
@@ -43,15 +36,13 @@ namespace PP.Repos.Implementation
                 .FirstOrDefault(o => o.OrderNumber == orderNumber);
         }
 
-        /// <summary>
-        /// Get all orders with related data
-        /// Used for order listing pages
-        /// </summary>
+       
         public IEnumerable<Order> GetAllOrders()
         {
             return _context.Orders
                 .Include(o => o.ShippingAddress)
                 .Include(o => o.OrderItems)
+                .Include(o => o.User)                // Include the customer for email display
                 .OrderByDescending(o => o.OrderDate)
                 .ToList();
         }
@@ -71,6 +62,16 @@ namespace PP.Repos.Implementation
                 .Include(o => o.ShippingAddress)
                 .Include(o => o.OrderItems)
                 .Where(o => o.Status == 0) 
+                .OrderByDescending(o => o.OrderDate)
+                .ToList();
+        }
+
+        public IEnumerable<Order> GetUserOrder(string userId)
+        {
+            return _context.Orders
+                .Include(o => o.ShippingAddress)
+                .Include(o => o.OrderItems)
+                .Where(o => o.UserId == userId)
                 .OrderByDescending(o => o.OrderDate)
                 .ToList();
         }

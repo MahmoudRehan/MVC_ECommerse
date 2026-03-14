@@ -1,11 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PP.Models;
-using PP.Repos.Implementation;
 using PP.Repos.Inerfaces;
 using PP.ViewModels;
 
-namespace PP.Controllers
+namespace PP.Areas.Admin.Controllers
 {
+   
+    // -----------------------------------------------------------------------
+    [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class ProductsController : Controller
     {
         public readonly IProductRepo _productRepo;
@@ -16,6 +20,7 @@ namespace PP.Controllers
             _productRepo = productRepo;
             _categoryRepo = categoryRepo;
         }
+
         public IActionResult Index(string? q, int? categoryId)
         {
             var products = _productRepo.FilterProducts(q, categoryId);
@@ -34,27 +39,27 @@ namespace PP.Controllers
                 return NotFound();
             return View(product);
         }
+
         public IActionResult Create()
         {
             ViewBag.Categories = _categoryRepo.GetAll();
             return View();
         }
+
         [HttpPost]
         public IActionResult Create(ProductVM productVM)
         {
-
             if (!ModelState.IsValid)
             {
                 ViewBag.Categories = _categoryRepo.GetAll();
                 return View(productVM);
             }
-            string fileName = "LEO.jpg";
 
+            string fileName = "LEO.jpg";
             if (productVM.Image != null)
-            {
                 fileName = DocumentSettings.UploadFile(productVM.Image, "Products");
-            }
-            Product product = new Product
+
+            var product = new Product
             {
                 Name = productVM.Name,
                 SKU = productVM.SKU,
@@ -64,6 +69,7 @@ namespace PP.Controllers
                 CategoryId = productVM.CategoryId,
                 IsActive = productVM.IsActive
             };
+
             _productRepo.Add(product);
             _productRepo.Save();
             return RedirectToAction("Index");
@@ -72,11 +78,10 @@ namespace PP.Controllers
         public IActionResult Edit(int id)
         {
             var product = _productRepo.GetById(id);
-
             if (product == null)
                 return NotFound();
 
-            ProductVM vm = new ProductVM
+            var vm = new ProductVM
             {
                 Id = product.Id,
                 Name = product.Name,
@@ -89,11 +94,8 @@ namespace PP.Controllers
             };
 
             ViewBag.Categories = _categoryRepo.GetAll();
-
             return View(vm);
         }
-
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -106,7 +108,6 @@ namespace PP.Controllers
             }
 
             var product = _productRepo.GetById(vm.Id);
-
             if (product == null)
                 return NotFound();
 
@@ -117,14 +118,10 @@ namespace PP.Controllers
             product.CategoryId = vm.CategoryId;
             product.IsActive = vm.IsActive;
 
-
-
             if (vm.Image != null)
             {
                 if (!string.IsNullOrEmpty(product.PictureUrl))
-                {
                     DocumentSettings.DeleteFile(product.PictureUrl, "Products");
-                }
 
                 product.PictureUrl = DocumentSettings.UploadFile(vm.Image, "Products");
             }
@@ -135,7 +132,6 @@ namespace PP.Controllers
 
             _productRepo.Update(product);
             _productRepo.Save();
-
             return RedirectToAction("Index");
         }
 
@@ -146,24 +142,21 @@ namespace PP.Controllers
                 return NotFound();
 
             if (!string.IsNullOrEmpty(product.PictureUrl))
-            {
                 DocumentSettings.DeleteFile(product.PictureUrl, "Products");
-            }
 
             _productRepo.Delete(id);
             _productRepo.Save();
             return RedirectToAction("Index");
         }
 
-
         public IActionResult ProductsByCategory(int id, string? q, int? categoryId)
         {
             var products = _productRepo.GetProductsBerCategory(categoryId ?? id);
-            
+
             ViewBag.SearchQuery = q;
             ViewBag.CategoryId = categoryId ?? id;
             ViewBag.Categories = _categoryRepo.GetAll();
-            
+
             return View(products);
         }
     }

@@ -60,6 +60,22 @@
                             </p>
                         </div>
 
+                        <div class="col-md-6 mb-3">
+                            <p class="mb-2">
+                                <strong>Customer Email:</strong><br />
+                                @if (!string.IsNullOrEmpty(Model.CustomerEmail))
+                                {
+                                    <a href="mailto:@Model.CustomerEmail" class="text-decoration-none">
+                                        @Model.CustomerEmail
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted fst-italic">Guest / Not available</span>
+                                }
+                            </p>
+                        </div>
+
                     </div>
 
                 </div>
