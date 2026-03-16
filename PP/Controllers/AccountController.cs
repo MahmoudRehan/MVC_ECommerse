@@ -73,7 +73,7 @@ namespace PP.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginVM model, string? returnUrl = null)
+        public async Task<IActionResult> Login(LoginVM model)
         {
             if (!ModelState.IsValid)
                 return View(model);
@@ -86,9 +86,7 @@ namespace PP.Controllers
 
             if (result.Succeeded)
             {
-                // Prevent open-redirect attacks: only follow returnUrl if it is a local path
-                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-                    return Redirect(returnUrl);
+               
 
                 return RedirectToAction("Index", "Catalog");
             }

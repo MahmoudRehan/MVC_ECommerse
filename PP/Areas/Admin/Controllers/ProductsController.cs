@@ -7,7 +7,6 @@ using PP.ViewModels;
 namespace PP.Areas.Admin.Controllers
 {
    
-    // -----------------------------------------------------------------------
     [Area("Admin")]
     [Authorize(Roles = "Admin")]
     public class ProductsController : Controller

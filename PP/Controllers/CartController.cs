@@ -18,10 +18,8 @@ namespace PP.Controllers
      
         public IActionResult Index()
         {
-            // Retrieve the cart from session storage
             var cart = CartService.GetCart(HttpContext.Session);
 
-            // Calculate totals for display
             ViewBag.CartTotal = CartService.GetCartTotal(cart);
             ViewBag.ItemCount = CartService.GetCartItemCount(cart);
 
@@ -90,17 +88,12 @@ namespace PP.Controllers
             return RedirectToAction("Index");
         }
 
-        /// <summary>
-        /// Remove a product from the cart
-        /// </summary>
-        /// <param name="productId">The ID of the product to remove</param>
+        
         [HttpPost]
         public IActionResult Remove(int productId)
         {
-            // Get current cart from session
             var cart = CartService.GetCart(HttpContext.Session);
 
-            // Find and remove the item
             var item = cart.FirstOrDefault(c => c.ProductId == productId);
 
             if (item != null)
@@ -109,7 +102,6 @@ namespace PP.Controllers
                 TempData["Success"] = "Item removed from cart.";
             }
 
-            // Save updated cart to session
             CartService.SaveCart(HttpContext.Session, cart);
 
             return RedirectToAction("Index");
@@ -119,14 +111,12 @@ namespace PP.Controllers
         [HttpPost]
         public IActionResult UpdateQuantity(int productId, int quantity)
         {
-            // Validate quantity
             if (quantity <= 0)
             {
                 TempData["Error"] = "Quantity must be at least 1.";
                 return RedirectToAction("Index");
             }
 
-            // Get product to check stock availability
             var product = _productRepo.GetActiveProductById(productId);
 
             if (product == null)
@@ -135,27 +125,22 @@ namespace PP.Controllers
                 return RedirectToAction("Index");
             }
 
-            // Check if requested quantity is available in stock
             if (quantity > product.StockQuantity)
             {
                 TempData["Error"] = $"Only {product.StockQuantity} units available in stock.";
                 return RedirectToAction("Index");
             }
 
-            // Get cart from session
             var cart = CartService.GetCart(HttpContext.Session);
 
-            // Find the item to update
             var item = cart.FirstOrDefault(c => c.ProductId == productId);
 
             if (item != null)
             {
-                // Update the quantity
                 item.Quantity = quantity;
                 TempData["Success"] = "Cart updated successfully.";
             }
 
-            // Save updated cart to session
             CartService.SaveCart(HttpContext.Session, cart);
 
             return RedirectToAction("Index");
@@ -164,7 +149,6 @@ namespace PP.Controllers
         [HttpPost]
         public IActionResult ClearCart()
         {
-            // Remove cart from session completely
             CartService.ClearCart(HttpContext.Session);
 
             TempData["Success"] = "Cart cleared successfully.";

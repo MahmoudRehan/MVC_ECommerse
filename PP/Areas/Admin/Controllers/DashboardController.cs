@@ -5,10 +5,7 @@ using PP.ViewModels;
 
 namespace PP.Areas.Admin.Controllers
 {
-    // [Authorize(Roles = "Admin")]:
-    // SignInManager embeds the user's roles as claims in the auth cookie when
-    // they log in.  This attribute checks for the "Admin" role claim.
-    // If the check fails, the request is redirected to /Account/Login.
+   
     [Area("Admin")]
     [Authorize(Roles = "Admin")]
     public class DashboardController : Controller
