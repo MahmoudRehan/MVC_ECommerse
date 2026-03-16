@@ -1,0 +1,50 @@
+@model IEnumerable<Category>
+
+<div class="container mt-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Deleted Categories</h2>
+        <a asp-action="Index" class="btn btn-outline-primary">Back to Categories</a>
+    </div>
+
+    <div class="card shadow border-0">
+        <div class="card-body">
+            @if (!Model.Any())
+            {
+                <div class="alert alert-info mb-0">No deleted categories found.</div>
+            }
+            else
+            {
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Id</th>
+                            <th>Name</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var cat in Model)
+                        {
+                            <tr>
+                                <td>@cat.Id</td>
+                                <td class="fw-semibold">@cat.Name</td>
+                                <td class="text-center">
+                                    <form asp-action="Restore" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@cat.Id" />
+                                        <button type="submit" class="btn btn-sm btn-success"
+                                                onclick="return confirm('Restore this category?');">
+                                            Restore
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+
+</div>

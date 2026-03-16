@@ -31,6 +31,14 @@ namespace PP.Models.Context
                 .Property(p => p.Price)
                 .HasPrecision(18, 2);
 
+            builder.Entity<Product>()
+                .Property(p => p.IsDeleted)
+                .HasDefaultValue(false);
+
+            builder.Entity<Category>()
+                .Property(c => c.IsDeleted)
+                .HasDefaultValue(false);
+
             builder.Entity<Order>()  
                 .Property(o => o.TotalAmount)
                 .HasPrecision(18, 2);

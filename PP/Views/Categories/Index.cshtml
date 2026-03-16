@@ -6,9 +6,14 @@
 
         <h2 class="fw-bold">Categories</h2>
 
-        <a asp-action="Create" class="btn btn-success">
-            + Add Category
-        </a>
+        <div>
+            <a asp-action="Create" class="btn btn-success">
+                + Add Category
+            </a>
+            <a asp-action="Deleted" class="btn btn-outline-secondary ms-2">
+                Deleted
+            </a>
+        </div>
 
     </div>
 
@@ -22,9 +27,7 @@
 
                     <div class="card-body">
 
-                        <div class="icon mb-3">
-                            📦
-                        </div>
+                        
 
                         <h5 class="fw-bold mb-3">
                             @cat.Id

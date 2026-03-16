@@ -18,7 +18,7 @@ namespace PP.Controllers
      
         public IActionResult Index()
         {
-            var cart = CartService.GetCart(HttpContext.Session);
+            var cart = CartService.GetCart(HttpContext.Session, User);
 
             ViewBag.CartTotal = CartService.GetCartTotal(cart);
             ViewBag.ItemCount = CartService.GetCartItemCount(cart);
@@ -48,14 +48,14 @@ namespace PP.Controllers
             }
 
             // Retrieve current cart from session
-            var cart = CartService.GetCart(HttpContext.Session);
+            var cart = CartService.GetCart(HttpContext.Session, User);
 
             // Check if product already exists in cart
             var existingItem = cart.FirstOrDefault(c => c.ProductId == productId);
 
             if (existingItem != null)
             {
-                // Product already in cart - increase quantity
+                // if product already in cart will increase quantity
                 // Check if we have enough stock
                 if (existingItem.Quantity + 1 > product.StockQuantity)
                 {
@@ -67,7 +67,7 @@ namespace PP.Controllers
             }
             else
             {
-                // Product not in cart - add new cart item
+                // if product not in cart will add new cart item
                 var cartItem = new CartItem
                 {
                     ProductId = product.Id,
@@ -81,7 +81,7 @@ namespace PP.Controllers
             }
 
             // Save updated cart back to session
-            CartService.SaveCart(HttpContext.Session, cart);
+            CartService.SaveCart(HttpContext.Session, cart, User);
 
             TempData["Success"] = $"{product.Name} added to cart!";
 
@@ -92,7 +92,7 @@ namespace PP.Controllers
         [HttpPost]
         public IActionResult Remove(int productId)
         {
-            var cart = CartService.GetCart(HttpContext.Session);
+            var cart = CartService.GetCart(HttpContext.Session, User);
 
             var item = cart.FirstOrDefault(c => c.ProductId == productId);
 
@@ -102,7 +102,7 @@ namespace PP.Controllers
                 TempData["Success"] = "Item removed from cart.";
             }
 
-            CartService.SaveCart(HttpContext.Session, cart);
+            CartService.SaveCart(HttpContext.Session, cart, User);
 
             return RedirectToAction("Index");
         }
@@ -131,7 +131,7 @@ namespace PP.Controllers
                 return RedirectToAction("Index");
             }
 
-            var cart = CartService.GetCart(HttpContext.Session);
+            var cart = CartService.GetCart(HttpContext.Session, User);
 
             var item = cart.FirstOrDefault(c => c.ProductId == productId);
 
@@ -141,7 +141,7 @@ namespace PP.Controllers
                 TempData["Success"] = "Cart updated successfully.";
             }
 
-            CartService.SaveCart(HttpContext.Session, cart);
+            CartService.SaveCart(HttpContext.Session, cart, User);
 
             return RedirectToAction("Index");
         }
@@ -149,7 +149,7 @@ namespace PP.Controllers
         [HttpPost]
         public IActionResult ClearCart()
         {
-            CartService.ClearCart(HttpContext.Session);
+            CartService.ClearCart(HttpContext.Session, User);
 
             TempData["Success"] = "Cart cleared successfully.";
 

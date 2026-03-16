@@ -16,17 +16,14 @@ namespace PP
 
             builder.Services.AddControllersWithViews();
 
-            // Allow Admin Area controllers to fall back to the root /Views/{Controller}/{Action}.cshtml
-            // so existing views are reused without duplication inside the Area folder.
-            // Format tokens: {0} = Action, {1} = Controller, {2} = Area
+            
             builder.Services.Configure<RazorViewEngineOptions>(options =>
             {
                 options.AreaViewLocationFormats.Add("/Views/{1}/{0}.cshtml");
                 options.AreaViewLocationFormats.Add("/Views/Shared/{0}.cshtml");
             });
 
-            // --- Session (shopping cart) ---
-            // Session allows storing data (e.g. cart items) per user across requests.
+          
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession(options =>
             {
@@ -35,7 +32,6 @@ namespace PP
                 options.Cookie.IsEssential = true;
             });
 
-            // --- EF Core with SQL Server ---
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -50,8 +46,7 @@ namespace PP
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
 
-            // Configure the cookie that Identity uses to track the logged-in user.
-            // [Authorize] automatically redirects unauthenticated users to LoginPath.
+            
             builder.Services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/Account/Login";
@@ -59,7 +54,7 @@ namespace PP
                 options.AccessDeniedPath = "/Account/Login";
             });
 
-            // --- Repository DI ---
+          
             builder.Services.AddScoped<IProductRepo, ProductRepo>();
             builder.Services.AddScoped<ICategoryRepo, CategoryRepo>();
             builder.Services.AddScoped<IOrderRepo, OrderRepo>();
@@ -67,15 +62,9 @@ namespace PP
 
             var app = builder.Build();
 
-            // Seed roles and default admin user at startup
             await SeedRolesAndAdminAsync(app);
 
-            // --- HTTP pipeline ---
-            if (!app.Environment.IsDevelopment())
-            {
-                app.UseExceptionHandler("/Home/Error");
-                app.UseHsts();
-            }
+            
 
             app.UseHttpsRedirection();
             app.UseRouting();
@@ -89,8 +78,7 @@ namespace PP
 
             app.MapStaticAssets();
 
-            // Area route MUST be registered before the default route so that
-            // /Admin/Products/Index is matched correctly.
+           
             app.MapControllerRoute(
                 name: "areas",
                 pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");

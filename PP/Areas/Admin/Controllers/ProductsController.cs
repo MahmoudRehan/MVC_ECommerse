@@ -10,7 +10,7 @@ namespace PP.Areas.Admin.Controllers
     [Area("Admin")]
     [Authorize(Roles = "Admin")]
     public class ProductsController : Controller
-    {
+    { 
         public readonly IProductRepo _productRepo;
         private readonly ICategoryRepo _categoryRepo;
 
@@ -140,12 +140,29 @@ namespace PP.Areas.Admin.Controllers
             if (product == null)
                 return NotFound();
 
-            if (!string.IsNullOrEmpty(product.PictureUrl))
-                DocumentSettings.DeleteFile(product.PictureUrl, "Products");
-
             _productRepo.Delete(id);
             _productRepo.Save();
             return RedirectToAction("Index");
+        }
+
+        public IActionResult Deleted()
+        {
+            var deletedProducts = _productRepo.GetDeletedProducts();
+            return View(deletedProducts);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Restore(int id)
+        {
+            var product = _productRepo.GetDeletedProductById(id);
+            if (product == null)
+                return NotFound();
+
+            _productRepo.Restore(id);
+            _productRepo.Save();
+
+            return RedirectToAction("Deleted");
         }
 
         public IActionResult ProductsByCategory(int id, string? q, int? categoryId)

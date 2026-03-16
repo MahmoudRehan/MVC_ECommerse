@@ -1,7 +1,6 @@
 @model PP.ViewModels.LoginVM
 @{
     ViewData["Title"] = "Login";
-    var returnUrl = ViewData["ReturnUrl"] as string;
 }
 
 <div class="container">
@@ -12,7 +11,7 @@
                     <h4 class="mb-0">Sign In</h4>
                 </div>
                 <div class="card-body p-4">
-                    <form asp-action="Login" asp-route-returnUrl="@returnUrl" method="post">
+                    <form asp-action="Login"  method="post">
                         <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
                         <div class="mb-3">

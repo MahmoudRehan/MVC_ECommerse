@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PP.Models;
+using PP.Services;
 using PP.ViewModels;
 
 namespace PP.Controllers
@@ -51,6 +52,8 @@ namespace PP.Controllers
 
                 await _signInManager.SignInAsync(user, isPersistent: false);
 
+                CartService.MergeGuestCartIntoUserCart(HttpContext.Session, user.Id);
+
                 return RedirectToAction("Index", "Catalog");
             }
 
@@ -62,12 +65,12 @@ namespace PP.Controllers
 
 
         [HttpGet]
-        public IActionResult Login(string? returnUrl = null)
+        public IActionResult Login()
         {
             if (_signInManager.IsSignedIn(User))
                 return RedirectToAction("Index", "Catalog");
 
-            ViewData["ReturnUrl"] = returnUrl;
+            
             return View();
         }
 
@@ -86,7 +89,11 @@ namespace PP.Controllers
 
             if (result.Succeeded)
             {
-               
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user != null)
+                {
+                    CartService.MergeGuestCartIntoUserCart(HttpContext.Session, user.Id);
+                }
 
                 return RedirectToAction("Index", "Catalog");
             }

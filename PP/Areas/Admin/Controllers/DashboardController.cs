@@ -7,7 +7,7 @@ namespace PP.Areas.Admin.Controllers
 {
    
     [Area("Admin")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")] 
     public class DashboardController : Controller
     {
         private readonly IProductRepo _productRepo;

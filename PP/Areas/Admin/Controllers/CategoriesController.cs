@@ -40,6 +40,11 @@ namespace PP.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(CategoryVM categoryVM)
         {
+            var categoryExists = _cat.GetAll().Any(c => c.Name == categoryVM.Name);
+            if (categoryExists)
+            {
+                ModelState.AddModelError("Name", "A category with this name already exists.");
+            }
             if (!ModelState.IsValid)
                 return View(categoryVM);
 
@@ -85,6 +90,25 @@ namespace PP.Areas.Admin.Controllers
             _cat.Delete(id);
             _cat.Save();
             return RedirectToAction("Index");
+        }
+
+        public IActionResult Deleted()
+        {
+            return View(_cat.GetDeletedCategories());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Restore(int id)
+        {
+            var category = _cat.GetDeletedCategoryById(id);
+            if (category == null)
+                return NotFound();
+
+            _cat.Restore(id);
+            _cat.Save();
+
+            return RedirectToAction("Deleted");
         }
     }
 }

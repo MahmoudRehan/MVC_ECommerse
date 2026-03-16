@@ -1,0 +1,60 @@
+@model IEnumerable<Product>
+
+<div class="container mt-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Deleted Products</h2>
+        <a asp-action="Index" class="btn btn-outline-primary">Back to Products</a>
+    </div>
+
+    <div class="card shadow border-0">
+        <div class="card-body">
+            @if (!Model.Any())
+            {
+                <div class="alert alert-info mb-0">No deleted products found.</div>
+            }
+            else
+            {
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>SKU</th>
+                            <th>Category</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <img src="~/Images/Products/@(item.PictureUrl ?? "no-image.png")"
+                                         width="60"
+                                         height="60"
+                                         class="rounded shadow-sm"
+                                         style="object-fit:cover;" />
+                                </td>
+                                <td class="fw-semibold">@item.Name</td>
+                                <td><span class="badge bg-secondary">@item.SKU</span></td>
+                                <td><span class="badge bg-info text-dark">@item.Category?.Name</span></td>
+                                <td class="text-center">
+                                    <form asp-action="Restore" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <button type="submit" class="btn btn-sm btn-success"
+                                                onclick="return confirm('Restore this product?');">
+                                            Restore
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+
+</div>

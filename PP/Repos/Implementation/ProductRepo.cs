@@ -19,6 +19,7 @@ namespace PP.Repos.Implementation
         {
             var query = _context.Products
                 .Include(p => p.Category)
+                .Where(p => !p.IsDeleted)
                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(q))
@@ -42,7 +43,7 @@ namespace PP.Repos.Implementation
         {
             return _context.Products
                 .Include(p => p.Category)
-                .Where(p => p.CategoryId == categoryId)
+                .Where(p => p.CategoryId == categoryId && !p.IsDeleted)
                 .ToList();
         }
 
@@ -50,7 +51,7 @@ namespace PP.Repos.Implementation
         {
             var query = _context.Products
                 .Include(p => p.Category)
-                .Where(p => p.IsActive)
+                .Where(p => p.IsActive && !p.IsDeleted)
                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(q))
@@ -78,7 +79,32 @@ namespace PP.Repos.Implementation
         {
             return _context.Products
                 .Include(p => p.Category)
-                .FirstOrDefault(p => p.Id == id && p.IsActive);
+                .FirstOrDefault(p => p.Id == id && p.IsActive && !p.IsDeleted);
+        }
+
+        public IEnumerable<Product> GetDeletedProducts()
+        {
+            return _context.Products
+                .Include(p => p.Category)
+                .Where(p => p.IsDeleted)
+                .ToList();
+        }
+
+        public Product GetDeletedProductById(int id)
+        {
+            return _context.Products
+                .Include(p => p.Category)
+                .FirstOrDefault(p => p.Id == id && p.IsDeleted);
+        }
+
+        public void Restore(int id)
+        {
+            var product = GetDeletedProductById(id);
+            if (product == null)
+                return;
+
+            product.IsDeleted = false;
+            _context.Products.Update(product);
         }
     }
 }

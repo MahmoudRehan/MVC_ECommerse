@@ -2,18 +2,16 @@
 
 <div class="container mt-5">
 
-    <!-- Hero Section -->
+    
     <div class="text-center mb-5">
-        <h1 class="display-4 fw-bold">🛍️ Shop Our Products</h1>
-        <p class="lead text-muted">Browse our collection of quality products</p>
+        <h1 class="display-4 fw-bold"> Shop Our Products</h1>
+        <p class=" text-muted">Browse our collection of quality products</p>
     </div>
 
-    <!-- Filter Bar -->
-    <div class="card shadow-sm border-0 mb-4">
+    <div class="card  border-0 mb-4">
         <div class="card-body">
             <form method="get" asp-action="Index" class="row g-3 align-items-end">
 
-                <!-- Search -->
                 <div class="col-md-4">
                     <label class="form-label fw-semibold">Search</label>
                     <input type="text"
@@ -52,10 +50,9 @@
                     </select>
                 </div>
 
-                <!-- Filter Button -->
                 <div class="col-md-1">
                     <button type="submit" class="btn btn-primary w-100">
-                        🔍 Filter
+                         Filter
                     </button>
                 </div>
 
@@ -127,7 +124,7 @@
                                 <a asp-action="Details"
                                    asp-route-id="@product.Id"
                                    class="btn btn-outline-primary w-100 mb-2">
-                                    👁️ View Details
+                                     View Details
                                 </a>
                                 
                                 @if (product.StockQuantity > 0)
@@ -135,13 +132,13 @@
                                     <form asp-controller="Cart" asp-action="AddToCart" method="post">
                                         <input type="hidden" name="productId" value="@product.Id" />
                                         <button type="submit" class="btn btn-success w-100">
-                                            🛒 Add to Cart
+                                             Add to Cart
                                         </button>
                                     </form>
                                 }
                                 else
                                 {
-                                    <button type="button" class="btn btn-secondary w-100" disabled>
+                                    <button type="button" class="btn btn-danger w-100" disabled>
                                         Out of Stock
                                     </button>
                                 }
@@ -159,7 +156,7 @@
     else
     {
         <div class="alert alert-info text-center py-5">
-            <h4>😕 No products found</h4>
+            <h4> No products found</h4>
             <p class="mb-0">Try adjusting your search or filters</p>
         </div>
     }

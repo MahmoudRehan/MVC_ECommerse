@@ -33,7 +33,7 @@ namespace PP.Controllers
         [HttpGet]
         public IActionResult Checkout()
         {
-            var cart = CartService.GetCart(HttpContext.Session);
+            var cart = CartService.GetCart(HttpContext.Session, User);
 
             if (cart == null || !cart.Any())
             {
@@ -55,7 +55,7 @@ namespace PP.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Checkout(CheckoutVM checkoutVM)
         {
-            var cart = CartService.GetCart(HttpContext.Session);
+            var cart = CartService.GetCart(HttpContext.Session, User);
 
             if (cart == null || !cart.Any())
             {
@@ -133,7 +133,7 @@ namespace PP.Controllers
                     _orderRepo.Save();
                     transaction.Commit();
 
-                    CartService.ClearCart(HttpContext.Session);
+                    CartService.ClearCart(HttpContext.Session, User);
 
                     TempData["Success"] = "Order placed successfully!";
                     return RedirectToAction("Confirmation", new { OrderId = order.OrderId });

@@ -9,5 +9,8 @@ namespace PP.Repos.Inerfaces
         public IEnumerable<Product> GetProductsBerCategory(int  categoryId);
         public IEnumerable<Product> GetActiveProducts(string? q, int? categoryId, string? sort);
         public Product GetActiveProductById(int id);
+        public IEnumerable<Product> GetDeletedProducts();
+        public Product GetDeletedProductById(int id);
+        public void Restore(int id);
     }
 }
